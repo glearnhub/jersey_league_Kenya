@@ -16,6 +16,7 @@ export function OrderClientView({
 }: {
   order: {
     number: string;
+    status: string;
     customerName: string;
     phone: string;
     subtotal: number;
@@ -110,6 +111,54 @@ export function OrderClientView({
 
   const firstName = order.customerName.split(' ')[0] || order.customerName;
 
+  const isPickup = order.deliveryMethod === 'pickup';
+  const steps = isPickup
+    ? [
+        { key: 'paid', label: 'Paid' },
+        { key: 'processing', label: 'Processing' },
+        { key: 'ready', label: 'Ready for pickup' },
+        { key: 'delivered', label: 'Picked up' },
+      ]
+    : [
+        { key: 'paid', label: 'Paid' },
+        { key: 'processing', label: 'Processing' },
+        { key: 'out_for_delivery', label: 'Out for delivery' },
+        { key: 'delivered', label: 'Delivered' },
+      ];
+
+  const statusOrder: Record<string, number> = {
+    paid: 0,
+    processing: 1,
+    ready: 2,
+    out_for_delivery: 2,
+    delivered: 3,
+  };
+  const currentStepIdx = statusOrder[order.status] ?? 0;
+
+  const paidHeadline =
+    order.status === 'delivered'
+      ? isPickup
+        ? `Order picked up, ${firstName}!`
+        : `Order delivered, ${firstName}!`
+      : order.status === 'out_for_delivery'
+        ? `Your order is on the way, ${firstName}!`
+        : order.status === 'ready'
+          ? `Your order is ready for pickup, ${firstName}!`
+          : order.status === 'processing'
+            ? `We are preparing your order, ${firstName}.`
+            : `Thank you, ${firstName}! Payment received.`;
+
+  const paidSubtext =
+    order.status === 'delivered'
+      ? 'Thank you for shopping with Jersey League Kenya.'
+      : order.status === 'out_for_delivery'
+        ? 'Our rider is out for delivery with your jersey.'
+        : order.status === 'ready'
+          ? `You can pick up your order from our shop${shopAddress ? `: ${shopAddress}` : ''}.`
+          : order.status === 'processing'
+            ? 'Your jerseys are being prepared and packed.'
+            : 'We have your order and will start preparing it now.';
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <p className="text-sm font-semibold text-slate-500">Order {order.number}</p>
@@ -121,19 +170,48 @@ export function OrderClientView({
       )}
 
       {initialState === 'paid' ? (
-        <div className="mt-2 rounded-2xl bg-electric p-6 text-black">
-          <h1 className="text-3xl font-extrabold">
-            Thank you, {firstName}! Payment received.
-          </h1>
-          <p className="mt-2 font-medium">
-            We have your order and will start preparing it now.
-            {mpesaReceipt && (
-              <>
-                {' '}
-                M-Pesa receipt: <strong>{mpesaReceipt}</strong>.
-              </>
-            )}
-          </p>
+        <div className="mt-2 space-y-4">
+          <div className="rounded-2xl bg-electric p-6 text-black">
+            <h1 className="text-3xl font-extrabold">{paidHeadline}</h1>
+            <p className="mt-2 font-medium">
+              {paidSubtext}
+              {mpesaReceipt && (
+                <>
+                  {' '}
+                  M-Pesa receipt: <strong>{mpesaReceipt}</strong>.
+                </>
+              )}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+              Order progress
+            </p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {steps.map((step, idx) => {
+                const done = idx <= currentStepIdx;
+                const active = idx === currentStepIdx;
+                return (
+                  <div
+                    key={step.key}
+                    className={`rounded-xl border p-3 text-center text-xs font-bold transition ${
+                      done
+                        ? active
+                          ? 'border-black bg-electric text-black shadow-xs'
+                          : 'border-emerald-300 bg-emerald-50 text-emerald-900'
+                        : 'border-slate-200 bg-slate-50 text-slate-400'
+                    }`}
+                  >
+                    <span className="block text-[10px] uppercase opacity-70">
+                      Step {idx + 1}
+                    </span>
+                    <span className="mt-0.5 block">{step.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       ) : initialState === 'waiting' ? (
         <>

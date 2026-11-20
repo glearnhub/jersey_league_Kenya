@@ -108,7 +108,19 @@ export default async function AdminOrdersPage({
                 </td>
                 <td className="px-4 py-3 font-semibold">{formatKes(order.total)}</td>
                 <td className="px-4 py-3">
-                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold">
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+                      order.status === 'delivered'
+                        ? 'bg-electric text-black'
+                        : ['paid', 'processing', 'ready', 'out_for_delivery'].includes(
+                              order.status
+                            )
+                          ? 'bg-sky-100 text-sky-800'
+                          : ['cancelled', 'failed'].includes(order.status)
+                            ? 'bg-rose-100 text-rose-800'
+                            : 'bg-amber-100 text-amber-800'
+                    }`}
+                  >
                     {ORDER_STATUSES[order.status] || order.status}
                   </span>
                 </td>

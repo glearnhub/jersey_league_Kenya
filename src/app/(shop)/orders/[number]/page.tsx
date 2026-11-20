@@ -60,6 +60,7 @@ export default async function OrderShowPage({
     <OrderClientView
       order={{
         number: freshOrder.number,
+        status: freshOrder.status,
         customerName: freshOrder.customerName,
         phone: freshOrder.phone,
         subtotal: freshOrder.subtotal,
