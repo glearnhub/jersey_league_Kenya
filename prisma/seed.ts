@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import fs from 'fs';
+import path from 'path';
 
 const prisma = new PrismaClient();
 
@@ -163,6 +165,19 @@ async function seedDemoProducts() {
         update: {},
         create: { productId: product.id, size, stock: 5, reserved: 0 },
       });
+    }
+
+    const existingImgCount = await prisma.productImage.count({ where: { productId: product.id } });
+    if (existingImgCount === 0) {
+      const productsDir = path.join(process.cwd(), 'public', 'storage', 'products');
+      if (fs.existsSync(productsDir)) {
+        const match = fs.readdirSync(productsDir).find((f) => f.startsWith(`${slug}.`));
+        if (match) {
+          await prisma.productImage.create({
+            data: { productId: product.id, path: `products/${match}`, alt: name, sortOrder: 0 },
+          });
+        }
+      }
     }
   }
 }
