@@ -13,8 +13,12 @@ export function ShopFooter({
     phone: string;
   };
 }) {
-  const waHref =
-    cfg.whatsappUrl || (cfg.whatsapp ? `https://wa.me/${cfg.whatsapp}` : '');
+  const defaultMessage = encodeURIComponent(
+    'Hello Jersey League Kenya, I would like to inquire about a jersey.'
+  );
+  const waHref = cfg.whatsapp
+    ? `https://wa.me/${cfg.whatsapp.replace(/\D/g, '')}?text=${defaultMessage}`
+    : cfg.whatsappUrl;
 
   return (
     <>
