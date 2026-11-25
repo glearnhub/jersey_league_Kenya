@@ -129,7 +129,15 @@ async function seedDemoProducts() {
   ];
 
   const adultSizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', '4XL'];
-  const kidsSizes = ['4-5Y', '6-7Y', '8-9Y', '10-11Y', '12-13Y'];
+  const kidsSizes = [
+    '1-2yrs (Size 16)',
+    '3-4yrs (Size 18)',
+    '5-6yrs (Size 20)',
+    '7yrs (Size 22)',
+    '8-9yrs (Size 24)',
+    '10-11yrs (Size 26)',
+    '12-13yrs (Size 28)',
+  ];
 
   for (let n = 0; n < demo.length; n++) {
     const [name, team, kit, version, price, categoryId, badge] = demo[n];

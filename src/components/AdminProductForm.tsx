@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Upload, Trash2, ArrowLeft, ArrowRight, ImagePlus } from 'lucide-react';
 import {
+  ADULT_SIZES,
   ALL_SIZES,
   imageUrlFor,
+  KIDS_SIZES,
   PRODUCT_BADGES,
   PRODUCT_KITS,
   PRODUCT_VERSIONS,
@@ -503,20 +505,52 @@ export function AdminProductForm({
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-bold">Sizes and stock</h2>
-          <button
-            type="button"
-            onClick={() =>
-              setForm({
-                ...form,
-                variants: [...form.variants, { size: 'M', stock: 5, reserved: 0 }],
-              })
-            }
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-bold hover:bg-slate-100"
-          >
-            Add a size
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                setForm({
+                  ...form,
+                  variants: KIDS_SIZES.map((size) => {
+                    const existing = form.variants.find((v) => v.size === size);
+                    return existing ?? { size, stock: 5, reserved: 0 };
+                  }),
+                })
+              }
+              className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100"
+            >
+              Use kids sizes
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                setForm({
+                  ...form,
+                  variants: ADULT_SIZES.slice(1).map((size) => {
+                    const existing = form.variants.find((v) => v.size === size);
+                    return existing ?? { size, stock: 5, reserved: 0 };
+                  }),
+                })
+              }
+              className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100"
+            >
+              Use adult sizes
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                setForm({
+                  ...form,
+                  variants: [...form.variants, { size: 'M', stock: 5, reserved: 0 }],
+                })
+              }
+              className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-bold hover:bg-slate-100"
+            >
+              Add a size
+            </button>
+          </div>
         </div>
         <div className="mt-4 space-y-3">
           {form.variants.map((v, idx) => (
@@ -530,6 +564,9 @@ export function AdminProductForm({
                 }}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
               >
+                {!ALL_SIZES.includes(v.size as (typeof ALL_SIZES)[number]) && (
+                  <option value={v.size}>{v.size}</option>
+                )}
                 {ALL_SIZES.map((s) => (
                   <option key={s} value={s}>
                     {s}

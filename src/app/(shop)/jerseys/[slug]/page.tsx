@@ -55,11 +55,11 @@ export default async function ProductDetailPage({
     },
   });
 
-  const sortedVariants = [...product.variants].sort(
-    (a, b) =>
-      ALL_SIZES.indexOf(a.size as (typeof ALL_SIZES)[number]) -
-      ALL_SIZES.indexOf(b.size as (typeof ALL_SIZES)[number])
-  );
+  const sortedVariants = [...product.variants].sort((a, b) => {
+    const ia = ALL_SIZES.indexOf(a.size as (typeof ALL_SIZES)[number]);
+    const ib = ALL_SIZES.indexOf(b.size as (typeof ALL_SIZES)[number]);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
 
   const sizes = sortedVariants.map((v) => ({
     id: v.id,

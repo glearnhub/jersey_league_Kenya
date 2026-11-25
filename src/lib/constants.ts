@@ -22,7 +22,15 @@ export const PRODUCT_BADGES: Record<string, string> = {
 };
 
 export const ADULT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', '4XL'] as const;
-export const KIDS_SIZES = ['4-5Y', '6-7Y', '8-9Y', '10-11Y', '12-13Y'] as const;
+export const KIDS_SIZES = [
+  '1-2yrs (Size 16)',
+  '3-4yrs (Size 18)',
+  '5-6yrs (Size 20)',
+  '7yrs (Size 22)',
+  '8-9yrs (Size 24)',
+  '10-11yrs (Size 26)',
+  '12-13yrs (Size 28)',
+] as const;
 export const ALL_SIZES = [...ADULT_SIZES, ...KIDS_SIZES] as const;
 
 export const DELIVERY_METHODS: Record<string, string> = {
